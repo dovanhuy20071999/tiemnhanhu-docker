@@ -8,13 +8,13 @@ services:
         - GID=${GID:-1000}
     ports:
       - "8002:80"
-    working_dir: /project_test/services/web
+    working_dir: /tiemnhanhu-docker/services/web
     volumes:
-      - ./:/project_test:delegated
+      - ./:/tiemnhanhu-docker:delegated
     depends_on:
       - php
     networks:
-      - project_test
+      - tiemnhanhu-docker
 
   db:
     build:
@@ -29,11 +29,11 @@ services:
       - "3308:3306"
     environment:
       MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: project_test_local
+      MYSQL_DATABASE: tiemnhanhu_docker_local
       MYSQL_PASSWORD: password
       MYSQL_HOME: /var/lib/mysql
     networks:
-      - project_test
+      - tiemnhanhu-docker
 
   php:
     build:
@@ -43,9 +43,9 @@ services:
         - DOCKER_USER=${DOCKER_USER:-docker}
     ports:
       - "${PHP_PORT:-9001}:9000"
-    working_dir: /project_test/services/web
+    working_dir: /tiemnhanhu-docker/services/web
     volumes:
-      - ./:/project_test:delegated
+      - ./:/tiemnhanhu-docker:delegated
     command: >
       /bin/bash -c "composer install
       && npm install
@@ -56,12 +56,12 @@ services:
       && yes | php artisan migrate --env=testing
       && php artisan storage:link
       && php artisan optimize:clear
-      && cp /project_test/tools/docker.aliases ~/.bash_aliases 
+      && cp /tiemnhanhu-docker/tools/docker.aliases ~/.bash_aliases 
       && php artisan queue:listen --timeout=240
       & php-fpm -R"
     networks:
-      - project_test
+      - tiemnhanhu-docker
 
 networks:
-  project_test:
+  tiemnhanhu-docker:
     driver: bridge
