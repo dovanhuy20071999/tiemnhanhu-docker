@@ -35,10 +35,16 @@ RUN addgroup --gid 1000 --system $DOCKER_USER && \
 WORKDIR /tiemnhanhu-docker/services/web
 
 # Ensure the directory exists and change ownership
-RUN mkdir -p /tiemnhanhu-docker/services/web/bootstrap/cache
-RUN chown -R 775 $DOCKER_USER /tiemnhanhu-docker/services/web/*
-RUN chown -R 775 $DOCKER_USER /tiemnhanhu-docker/services/web/storage/*
-RUN chown -R 775 $DOCKER_USER /tiemnhanhu-docker/services/web/bootstrap/*
+# RUN mkdir -p /tiemnhanhu-docker/services/web/bootstrap/cache
+# RUN chown -R 775 $DOCKER_USER /tiemnhanhu-docker/services/web/*
+# RUN chown -R 775 $DOCKER_USER /tiemnhanhu-docker/services/web/storage/*
+# RUN chown -R 775 $DOCKER_USER /tiemnhanhu-docker/services/web/bootstrap/*
+
+RUN mkdir -p /tiemnhanhu-docker/services/web/bootstrap/cache && \
+    mkdir -p /tiemnhanhu-docker/services/web/storage && \
+    chown -R $DOCKER_USER:$DOCKER_USER /tiemnhanhu-docker/services/web && \
+    chmod -R 775 /tiemnhanhu-docker/services/web/storage && \
+    chmod -R 775 /tiemnhanhu-docker/services/web/bootstrap/cache
 
 # Change ownership of the application to the www-data user
 # RUN chown -R $DOCKER_USER:$DOCKER_USER /var/www/html
