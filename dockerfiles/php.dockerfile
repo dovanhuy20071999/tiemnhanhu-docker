@@ -26,10 +26,12 @@ RUN apt-get update && apt-get install -y libmagickwand-dev --no-install-recommen
     && pecl install imagick \
     && docker-php-ext-enable imagick
 
-ARG DOCKER_USER
+# ARG DOCKER_USER
 
-RUN addgroup --gid 1000 --system $DOCKER_USER && \
-    adduser --allow-bad-names --disabled-password --uid 1000 --ingroup $DOCKER_USER --gecos "" $DOCKER_USER
+USER www-data
+RUN chmod -R www-data:www-data /tiemnhanhu-docker/
+# RUN addgroup --gid 1000 --system $DOCKER_USER && \
+#     adduser --allow-bad-names --disabled-password --uid 1000 --ingroup $DOCKER_USER --gecos "" $DOCKER_USER
 
 # Set the working directory for the user
 WORKDIR /tiemnhanhu-docker/services/web
@@ -43,8 +45,10 @@ WORKDIR /tiemnhanhu-docker/services/web
 RUN mkdir -p /tiemnhanhu-docker/services/web/bootstrap/cache && \
     mkdir -p /tiemnhanhu-docker/services/web/storage && \
     chown -R $DOCKER_USER:$DOCKER_USER /tiemnhanhu-docker/services/web && \
-    chmod -R 775 /tiemnhanhu-docker/services/web/storage && \
-    chmod -R 775 /tiemnhanhu-docker/services/web/bootstrap/cache
+    chmod -R $DOCKER_USER:$DOCKER_USER /tiemnhanhu-docker/services/web/storage && \
+    chmod -R $DOCKER_USER:$DOCKER_USER /tiemnhanhu-docker/services/web/storage/logs && \
+    chmod -R $DOCKER_USER:$DOCKER_USER /tiemnhanhu-docker/services/web/storage/framework && \
+    chmod -R $DOCKER_USER:$DOCKER_USER /tiemnhanhu-docker/services/web/bootstrap/cache
 
 # Change ownership of the application to the www-data user
 # RUN chown -R $DOCKER_USER:$DOCKER_USER /var/www/html
