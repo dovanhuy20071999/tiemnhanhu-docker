@@ -1,0 +1,67 @@
+services:
+  api:
+    build:
+      context: ./dockerfiles
+      dockerfile: nginx.dockerfile
+      args:
+        - UID=${UID:-1000}
+        - GID=${GID:-1000}
+    ports:
+      - "8002:80"
+    working_dir: /project_test/services/web
+    volumes:
+      - ./:/project_test:delegated
+    depends_on:
+      - php
+    networks:
+      - project_test
+
+  db:
+    build:
+      context: ./dockerfiles
+      dockerfile: mysql.dockerfile
+    tty: true
+    platform: linux/x86_64
+    volumes:
+      - ./dockerfiles/mysql-data:/var/lib/mysql:rw
+      - ./dockerfiles/mysql.d/mys.cnf:/etc/mysql/mys.cnf:ro
+    ports:
+      - "3308:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: project_test_local
+      MYSQL_PASSWORD: password
+      MYSQL_HOME: /var/lib/mysql
+    networks:
+      - project_test
+
+  php:
+    build:
+      context: ./dockerfiles
+      dockerfile: php.dockerfile
+      args:
+        - DOCKER_USER=${DOCKER_USER:-docker}
+    ports:
+      - "${PHP_PORT:-9001}:9000"
+    working_dir: /project_test/services/web
+    volumes:
+      - ./:/project_test:delegated
+    command: >
+      /bin/bash -c "composer install
+      && npm install
+      && npm run build
+      && php artisan app:generate-env-file --env=docker --testing=yes
+      && yes | php artisan route:clear
+      && yes | php artisan migrate
+      && yes | php artisan migrate --env=testing
+      && php artisan storage:link
+      && php artisan optimize:clear
+      && cp /project_test/tools/docker.aliases ~/.bash_aliases 
+      && php artisan queue:listen --timeout=240
+      & php-fpm -R"
+    networks:
+      - project_test
+
+networks:
+  project_test:
+    driver: bridge
