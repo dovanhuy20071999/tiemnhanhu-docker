@@ -44,6 +44,8 @@ services:
     ports:
       - "${PHP_PORT:-9001}:9000"
     working_dir: /tiemnhanhu-docker/services/web
+    depends_on:
+      - db
     volumes:
       - ./:/tiemnhanhu-docker:delegated
     command: >
