@@ -29,7 +29,7 @@ RUN apt-get update && apt-get install -y libmagickwand-dev --no-install-recommen
 ARG DOCKER_USER
 
 RUN addgroup --gid 1000 --system $DOCKER_USER && \
-    adduser --allow-bad-names --disabled-password --uid 1000 --ingroup $DOCKER_USER --gecos "" $DOCKER_USER
+    useradd --allow-bad-names --disabled-password --uid 1000 --ingroup $DOCKER_USER --gecos "" $DOCKER_USER
 
 # Set the working directory for the user
 WORKDIR /tiemnhanhu-docker/services/web

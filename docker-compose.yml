@@ -1,5 +1,5 @@
 services:
-  api:
+  nginx:
     build:
       context: ./dockerfiles
       dockerfile: nginx.dockerfile
