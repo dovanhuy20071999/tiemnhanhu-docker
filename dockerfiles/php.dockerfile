@@ -29,17 +29,7 @@ RUN apt-get update && apt-get install -y libmagickwand-dev --no-install-recommen
 ARG DOCKER_USER
 
 RUN addgroup --gid 1000 --system $DOCKER_USER && \
-    useradd --allow-bad-names --disabled-password --uid 1000 --ingroup $DOCKER_USER --gecos "" $DOCKER_USER
-
-# Set the working directory for the user
-WORKDIR /tiemnhanhu-docker/services/web
-
-# Ensure the directory exists and change ownership
-RUN mkdir -p /tiemnhanhu-docker/services/web/bootstrap/cache && \
-    mkdir -p /tiemnhanhu-docker/services/web/storage && \
-    chown -R $DOCKER_USER:$DOCKER_USER /tiemnhanhu-docker/services/web && \
-    chmod -R 775 /tiemnhanhu-docker/services/web/storage && \
-    chmod -R 775 /tiemnhanhu-docker/services/web/bootstrap/cache
+    adduser --allow-bad-names --disabled-password --uid 1000 --ingroup $DOCKER_USER --gecos "" $DOCKER_USER
 
 # Change ownership of the application to the www-data user
 # RUN chown -R $DOCKER_USER:$DOCKER_USER /var/www/html
